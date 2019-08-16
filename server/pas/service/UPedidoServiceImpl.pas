@@ -12,10 +12,16 @@ type
     FPedidoRepository: IPedidoRepository;
     FClienteService: IClienteService;
 
-    function calcularValorPedido(const APizzaTamanho: TPizzaTamanhoEnum): Currency;
-    function calcularTempoPreparo(const APizzaTamanho: TPizzaTamanhoEnum; const APizzaSabor: TPizzaSaborEnum): Integer;
+    function calcularValorPedido(const APizzaTamanho: TPizzaTamanhoEnum)
+      : Currency;
+    function calcularTempoPreparo(const APizzaTamanho: TPizzaTamanhoEnum;
+      const APizzaSabor: TPizzaSaborEnum): Integer;
   public
-    function efetuarPedido(const APizzaTamanho: TPizzaTamanhoEnum; const APizzaSabor: TPizzaSaborEnum; const ADocumentoCliente: String): TPedidoRetornoDTO;
+    function efetuarPedido(const APizzaTamanho: TPizzaTamanhoEnum;
+      const APizzaSabor: TPizzaSaborEnum; const ADocumentoCliente: String)
+      : TPedidoRetornoDTO;
+    function constultarPedido(const ADocumentoCliente: string)
+      : TPedidoRetornoDTO;
 
     constructor Create; reintroduce;
   end;
@@ -27,7 +33,8 @@ uses
 
 { TPedidoService }
 
-function TPedidoService.calcularTempoPreparo(const APizzaTamanho: TPizzaTamanhoEnum; const APizzaSabor: TPizzaSaborEnum): Integer;
+function TPedidoService.calcularTempoPreparo(const APizzaTamanho
+  : TPizzaTamanhoEnum; const APizzaSabor: TPizzaSaborEnum): Integer;
 begin
   Result := 15;
   case APizzaTamanho of
@@ -43,7 +50,8 @@ begin
     Result := Result + 5;
 end;
 
-function TPedidoService.calcularValorPedido(const APizzaTamanho: TPizzaTamanhoEnum): Currency;
+function TPedidoService.calcularValorPedido(const APizzaTamanho
+  : TPizzaTamanhoEnum): Currency;
 begin
   Result := 20;
   case APizzaTamanho of
@@ -56,6 +64,12 @@ begin
   end;
 end;
 
+function TPedidoService.constultarPedido(
+  const ADocumentoCliente: string): TPedidoRetornoDTO;
+begin
+  Result:= FPedidoRepository.consultarPedido(ADocumentoCliente);
+end;
+
 constructor TPedidoService.Create;
 begin
   inherited;
@@ -64,7 +78,8 @@ begin
   FClienteService := TClienteService.Create;
 end;
 
-function TPedidoService.efetuarPedido(const APizzaTamanho: TPizzaTamanhoEnum; const APizzaSabor: TPizzaSaborEnum; const ADocumentoCliente: String)
+function TPedidoService.efetuarPedido(const APizzaTamanho: TPizzaTamanhoEnum;
+  const APizzaSabor: TPizzaSaborEnum; const ADocumentoCliente: String)
   : TPedidoRetornoDTO;
 var
   oValorPedido: Currency;
@@ -75,8 +90,10 @@ begin
   oTempoPreparo := calcularTempoPreparo(APizzaTamanho, APizzaSabor);
   oCodigoCliente := FClienteService.adquirirCodigoCliente(ADocumentoCliente);
 
-  FPedidoRepository.efetuarPedido(APizzaTamanho, APizzaSabor, oValorPedido, oTempoPreparo, oCodigoCliente);
-  Result := TPedidoRetornoDTO.Create(APizzaTamanho, APizzaSabor, oValorPedido, oTempoPreparo);
+  FPedidoRepository.efetuarPedido(APizzaTamanho, APizzaSabor, oValorPedido,
+    oTempoPreparo, oCodigoCliente);
+  Result := TPedidoRetornoDTO.Create(APizzaTamanho, APizzaSabor, oValorPedido,
+    oTempoPreparo);
 end;
 
 end.
